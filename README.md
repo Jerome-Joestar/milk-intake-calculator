@@ -1,2 +1,2 @@
 # milk-intake-calculator
-Calculator to determine milk intake for babies.
+Calculator to determine if babies are eating healthy based on certain stats.
