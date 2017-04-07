@@ -1,2 +1,1 @@
-/*
-export const CALCULATE_MILK_INTAKE = 'calculate_milk_intake';*/
+export const INTAKE_SUBMIT = 'intake_submit';

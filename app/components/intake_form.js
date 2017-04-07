@@ -1,40 +1,38 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Field, reduxForm } from 'redux-form';
+import renderInputField from './input_field';
+import * as actions from '../actions';
 
-class Intake_Form extends Component {
+const data = {
+    age: "4",
+    avg_number_feedings: "4",
+    feeding_intake: "3",
+    sex: "girl",
+    weight_ounces: "3",
+    weight_pounds: "4",
+};
 
-/*    componentDidMount() {
-        this.handleInitialize();
-    }
+class IntakeForm extends Component {
 
-    handleInitialize() {
-        const initData = {
-            "firstName": this.props.currentUser.firstName,
-            "lastName": this.props.currentUser.lastName,
-            "sex": this.props.currentUser.sex,
-            "email": this.props.userEmail,
-            "phoneNumber": this.props.currentUser.phoneNumber
-        };
-
-        this.props.initialize(initData);
-    }*/
+    handleFormSubmit = values => this.props.generateIntakeResults(values);
 
 
     render() {
-        const { handleSubmit, fields: { sex, age, weight_pounds, weight_ounces, feeding_intake, avg_number_feedings } } = this.props;
-
         return (
-            <form onSubmit={ handleSubmit(this.handleFormSubmit.bind(this)) }>
+            <form onSubmit={ this.props.handleSubmit(this.handleFormSubmit) }>
                 <div className="form-group">
                     <label htmlFor="sex">Sex*</label>
-                    <select name="sex" className="form-control">
+                    <Field name="sex" component="select" className="form-control">
+                        <option></option>
                         <option value="boy">Boy</option>
                         <option value="girl">Girl</option>
-                    </select>
+                    </Field>
                 </div>
                 <div className="form-group">
                     <label htmlFor="age">Age (months)*</label>
-                    <select name="age" className="form-control">
+                    <Field name="age" component="select" className="form-control">
+                        <option></option>
                         <option value="0">0</option>
                         <option value="1">1</option>
                         <option value="2">2</option>
@@ -42,46 +40,52 @@ class Intake_Form extends Component {
                         <option value="4">4</option>
                         <option value="5">5</option>
                         <option value="6">6</option>
-                    </select>
+                    </Field>
                 </div>
                 <div className="form-group">
                     <label htmlFor="weight_pounds">Weight (lbs)*</label>
-                    <select name="weight_pounds" className="form-control">
+                    <Field name="weight_pounds" component="select" className="form-control">
+                        <option></option>
                         <option value="1">1</option>
                         <option value="2">2</option>
                         <option value="3">3</option>
                         <option value="4">4</option>
                         <option value="5">5</option>
                         <option value="6">6</option>
-                    </select>
+                    </Field>
                 </div>
                 <div className="form-group">
                     <label htmlFor="weight_ounces">Weight (oz)*</label>
-                    <select name="weight_ounces" className="form-control">
+                    <Field name="weight_ounces" component="select" className="form-control">
+                        <option></option>
                         <option value="1">1</option>
                         <option value="2">2</option>
                         <option value="3">3</option>
                         <option value="4">4</option>
                         <option value="5">5</option>
                         <option value="6">6</option>
-                    </select>
+                    </Field>
                 </div>
                 <div className="form-group">
-                    <label htmlFor="feeding_intake">Per Feeding Intake (g)</label>
-                    <Field name="feeding_intake" component="input" type="number" className="form-control"
+                    <Field name="feeding_intake" label="Per Feeding Intake (g)" component={renderInputField}
+                           type="number" className="form-control"
                            placeholder="Enter value here:"/>
                 </div>
                 <div className="form-group">
-                    <label htmlFor="avg_number_feedings">Average number of feedings per day</label>
-                    <Field name="avg_number_feedings" component type="number" className="form-control"
+                    <Field name="avg_number_feedings" label="Average number of feedings per day"
+                           component={renderInputField} type="number" className="form-control"
                            placeholder="Enter value here:"/>
                 </div>
-                <button type="submit" className="btn btn-success">Submit</button>
+                <button type="submit" className="btn btn-primary">Submit</button>
             </form>
         );
     }
 }
 
-export default reduxForm({
-    form: 'Intake_Form',
-})(Intake_Form);
+
+
+IntakeForm = reduxForm({
+    form: 'intake_form',
+})(IntakeForm);
+
+export default connect(null, actions)(IntakeForm);

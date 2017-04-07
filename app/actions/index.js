@@ -1,6 +1,5 @@
-/*
-import { CALCULATE_MILK_INTAKE } from './types';
+import { INTAKE_SUBMIT } from './types';
 
-export function generateResults({ sex, age, weight_pounds, weight_ounces, feeding_intake, avg_number_feedings }) {
-    return '';
-}*/
+export function generateIntakeResults(values) {
+    return { type: INTAKE_SUBMIT, values };
+}
