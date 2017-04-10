@@ -1,38 +1,34 @@
 import React, { Component } from 'react';
-import { getWeightInKg } from '../helper';
+import { generateResults } from '../helper';
 
 export default class IntakeForm extends Component {
 
     constructor(props) {
         super(props);
 
-        this.generateCalculations = this.generateCalculations.bind(this);
+        this.setStateBatch = this.setStateBatch.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleOnSubmit = this.handleOnSubmit.bind(this);
     }
 
-    generateCalculations() {
-
-        getWeightInKg(this.state.weight_pounds, this.state.weight_ounces);
-        this.setState({ dailyRequiredOz: dailyRequiredOz });
-        this.setState({ dailyRequiredMl: dailyRequiredMl });
-        this.setState({ perFeedingMin: perFeedingMin });
-        this.setState({ perFeedingMax: perFeedingMax });
-        this.setState({ setFeedingsPerDayMin: setFeedingsPerDayMin });
-        this.setState({ setFeedingsPerDayMax: setFeedingsPerDayMax });
-        this.setState({ supplementFeedingUnknown: supplementFeedingUnknown });
-        this.setState({ supplementFeedingKnown: supplementFeedingKnown });
+    setStateBatch(stateArray) {
+        stateArray.forEach((el) => {
+            this.setState(el);
+        });
     }
 
     handleInputChange(e) {
         let newState = {};
-        newState[ e.target.name ] = e.target.value;
+        let intVal = parseInt(e.target.value)
+        newState[ e.target.name ] = intVal ? intVal : e.target.value;
         this.setState(newState);
     }
 
     handleOnSubmit(e) {
         e.preventDefault();
-        this.generateCalculations();
+        this.setStateBatch(generateResults(this.state.weight_pounds,
+            this.state.weight_ounces, this.state.sex, this.state.age,
+            this.state.feeding_intake, this.state.avg_number_feedings));
     }
 
     render() {
