@@ -8,7 +8,18 @@ export default class IntakeForm extends Component {
 
         this.setStateBatch = this.setStateBatch.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
+        this.handleOnCancel = this.handleOnCancel.bind(this);
         this.handleOnSubmit = this.handleOnSubmit.bind(this);
+        this.state = {
+            age: '',
+            avg_number_feedings: '',
+            feeding_intake: '',
+            sex: '',
+            weight_pounds: '',
+            weight_ounces: ''
+        };
+
+        this.baseState = this.state;
     }
 
     setStateBatch(stateArray) {
@@ -22,6 +33,11 @@ export default class IntakeForm extends Component {
         let intVal = parseInt(e.target.value)
         newState[ e.target.name ] = intVal ? intVal : e.target.value;
         this.setState(newState);
+    }
+
+    handleOnCancel(e) {
+        e.preventDefault();
+        this.setState(this.baseState);
     }
 
     handleOnSubmit(e) {
@@ -53,7 +69,9 @@ export default class IntakeForm extends Component {
                 <form name="intake_form" onSubmit={ this.props.handleOnSubmit } data={this.state}>
                     <div className="form-group">
                         <label htmlFor="sex">Sex*</label>
-                        <select name="sex" className="form-control" onChange={ this.handleInputChange }>
+                        <select name="sex"
+                                value={this.state.sex}
+                                className="form-control" onChange={ this.handleInputChange } required>
                             <option></option>
                             <option value="boy">Boy</option>
                             <option value="girl">Girl</option>
@@ -61,46 +79,32 @@ export default class IntakeForm extends Component {
                     </div>
                     <div className="form-group">
                         <label htmlFor="age">Age (months)*</label>
-                        <select name="age" className="form-control" onChange={ this.handleInputChange }>
-                            <option></option>
-                            <option value="0">0</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                            <option value="6">6</option>
-                        </select>
+                        <input name="age"
+                               value={this.state.age}
+                               type="number" min="0" max="15"
+                               className="form-control"
+                               onChange={ this.handleInputChange } required/>
                     </div>
                     <div className="form-group">
                         <label htmlFor="weight_pounds">Weight (lbs)*</label>
-                        <select name="weight_pounds" className="form-control" onChange={ this.handleInputChange }>
-                            <option></option>
-                            <option value="0">0</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                            <option value="6">6</option>
-                        </select>
+                        <input name="weight_pounds"
+                               value={this.state.weight_pounds}
+                               type="number" min="6" max="30"
+                               className="form-control"
+                               onChange={ this.handleInputChange } required/>
                     </div>
                     <div className="form-group">
                         <label htmlFor="weight_ounces">Weight (oz)*</label>
-                        <select name="weight_ounces" className="form-control" onChange={ this.handleInputChange }>
-                            <option></option>
-                            <option value="0">0</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                            <option value="6">6</option>
-                        </select>
+                        <input name="weight_ounces"
+                               value={this.state.weight_ounces}
+                               type="number"
+                               min="0" max="15" className="form-control"
+                               onChange={ this.handleInputChange } required/>
                     </div>
                     <div className="form-group">
                         <label htmlFor="feeding_intake">Per Feeding Intake (g)</label>
                         <input name="feeding_intake"
+                               value={this.state.feeding_intake}
                                onChange={ this.handleInputChange }
                                type="number" className="form-control"
                                placeholder="Enter value here:"/>
@@ -108,10 +112,13 @@ export default class IntakeForm extends Component {
                     <div className="form-group">
                         <label htmlFor="avg_number_feedings">Average number of feedings per day</label>
                         <input name="avg_number_feedings"
+                               value={this.state.avg_number_feedings}
                                onChange={ this.handleInputChange }
                                type="number" className="form-control"
                                placeholder="Enter value here:"/>
                     </div>
+                    <button type="cancel" className="btn btn-cancel" onClick={this.handleOnCancel}>Reset Form
+                    </button>
                     <button type="submit" className="btn btn-primary" onClick={this.handleOnSubmit}>Calculate Results
                     </button>
                 </form>

@@ -12,65 +12,65 @@ const valueLookup = {
 
 function getWeightInKg(weightPounds, weightOunces) {
     valueLookup.weightInKg = ((weightPounds * 16) + weightOunces) * ozToKgMultiplier;
+    console.log(valueLookup.weightInKg)
     return valueLookup.weightInKg;
 }
 
-function getDailyRequiredIntake(weightInKg, sex, age) {
-    valueLookup.requiredIntake = weightInKg * (valueLookup[ sex ][ age ]);
+function getDailyRequiredIntake(sex, age) {
+    valueLookup.requiredIntake = valueLookup.weightInKg * (valueLookup[ sex ][ age ]);
     return valueLookup.requiredIntake;
 }
 
-function getDailyRequiredIntakeOz(requiredIntake) {
-    valueLookup.dailyRequiredOz = (requiredIntake / kcalPerOzMilk).toFixed(1);
+function getDailyRequiredIntakeOz() {
+    valueLookup.dailyRequiredOz = (valueLookup.requiredIntake / kcalPerOzMilk).toFixed(1);
     return valueLookup.dailyRequiredOz;
 }
 
-function getDailyRequiredIntakeMl(requiredIntake) {
-    valueLookup.dailyRequiredMl = Math.round(requiredIntake / kcalPerMlMilk);
+function getDailyRequiredIntakeMl() {
+    valueLookup.dailyRequiredMl = Math.round(valueLookup.requiredIntake / kcalPerMlMilk);
     return valueLookup.dailyRequiredMl;
 }
 
-function getPerFeedingMin(dailyRequiredOz) {
-    return (dailyRequiredOz / 12).toFixed(1);
+function getPerFeedingMin() {
+    return (valueLookup.dailyRequiredOz / 12).toFixed(1);
 }
 
-function getPerFeedingMax(dailyRequiredOz) {
-    return (dailyRequiredOz / 8).toFixed(1);
+function getPerFeedingMax() {
+    return (valueLookup.dailyRequiredOz / 8).toFixed(1);
 }
 
-function getFeedingsPerDayMin(dailyRequiredMl) {
-    return Math.round((dailyRequiredMl / 12));
+function getFeedingsPerDayMin() {
+    return Math.round((valueLookup.dailyRequiredMl / 12));
 }
 
-function getFeedingsPerDayMax(dailyRequiredMl) {
-    return Math.round((dailyRequiredMl / 8));
+function getFeedingsPerDayMax() {
+    return Math.round((valueLookup.dailyRequiredMl / 8));
 }
 
-function getSupplementFeedingUnknown(dailyRequiredMl, feedingIntake) {
-    return Math.round((dailyRequiredMl / 10) - feedingIntake);
+function getSupplementFeedingUnknown(feedingIntake) {
+    return Math.round((valueLookup.dailyRequiredMl / 10) - feedingIntake);
 }
 
-function getSupplementFeedingKnown(dailyRequiredMl, feedingIntake, avgNumberFeedings) {
-    return Math.round((dailyRequiredMl / avgNumberFeedings) - feedingIntake);
+function getSupplementFeedingKnown(feedingIntake, avgNumberFeedings) {
+    return Math.round((valueLookup.dailyRequiredMl / avgNumberFeedings) - feedingIntake);
 }
 
 export function generateResults(weightPounds, weightOunces, sex, age, feedingIntake, avgNumberFeedings) {
     let newStates = [];
     newStates.push({ weightInKg: getWeightInKg(weightPounds, weightOunces) });
-    newStates.push({ requiredIntake: getDailyRequiredIntake(valueLookup.weightInKg, sex, age) });
-    newStates.push({ dailyRequiredOz: getDailyRequiredIntakeOz(valueLookup.requiredIntake) });
-    newStates.push({ dailyRequiredMl: getDailyRequiredIntakeMl(valueLookup.requiredIntake) });
-    newStates.push({ perFeedingMin: getPerFeedingMin(valueLookup.dailyRequiredOz) });
-    newStates.push({ perFeedingMax: getPerFeedingMax(valueLookup.dailyRequiredOz) });
-    newStates.push({ setFeedingsPerDayMin: getFeedingsPerDayMin(valueLookup.dailyRequiredMl) });
-    newStates.push({ setFeedingsPerDayMax: getFeedingsPerDayMax(valueLookup.dailyRequiredMl) });
+    newStates.push({ requiredIntake: getDailyRequiredIntake(sex, age) });
+    newStates.push({ dailyRequiredOz: getDailyRequiredIntakeOz() });
+    newStates.push({ dailyRequiredMl: getDailyRequiredIntakeMl() });
+    newStates.push({ perFeedingMin: getPerFeedingMin() });
+    newStates.push({ perFeedingMax: getPerFeedingMax() });
+    newStates.push({ setFeedingsPerDayMin: getFeedingsPerDayMin() });
+    newStates.push({ setFeedingsPerDayMax: getFeedingsPerDayMax() });
 
     if (feedingIntake) {
-        newStates.push({ supplementFeedingUnknown: getSupplementFeedingUnknown(valueLookup.dailyRequiredMl, feedingIntake) });
+        newStates.push({ supplementFeedingUnknown: getSupplementFeedingUnknown(feedingIntake) });
         if (avgNumberFeedings) {
-            newStates.push({ supplementFeedingKnown: getSupplementFeedingKnown(valueLookup.dailyRequiredMl, feedingIntake, avgNumberFeedings) });
+            newStates.push({ supplementFeedingKnown: getSupplementFeedingKnown(feedingIntake, avgNumberFeedings) });
         }
     }
-
     return newStates;
 }
