@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { reduxForm } from 'redux-form';
 import { generateResults } from '../helper';
+import InstructionalB from './instructional_b';
 
-class IntakeForm extends Component {
+export default class IntakeForm extends Component {
 
     constructor(props) {
         super(props);
@@ -46,23 +46,9 @@ class IntakeForm extends Component {
         this.setStateBatch(generateResults(this.state.weight_pounds,
             this.state.weight_ounces, this.state.age,
             this.state.feeding_intake, this.state.avg_number_feedings));
-
-
-    }
-
-    renderAlert() {
-        if (this.props.errorMessage) {
-            return (
-                <div className="alert alert-danger">
-                    <strong>{ this.props.errorMessage }</strong>
-                </div>
-            )
-        }
     }
 
     render() {
-
-        const { handleSubmit, fields: { age, weight_pounds, weight_ounces, feeding_intake, avg_number_feedings } } = this.props;
 
         if (this.state && this.state.dailyRequiredOz !== undefined && this.state.dailyRequiredMl && this.state.perFeedingMin && this.state.perFeedingMax) {
             var status = <div>
@@ -81,14 +67,14 @@ class IntakeForm extends Component {
         }
 
         return (
-            <div>
-                <form name="intake_form" onSubmit={ handleSubmit(this.handleOnSubmit.bind(this)) }>
+            <div className="container form-container">
+                <form name="intake_form" onSubmit={ this.handleOnSubmit }>
                     <fieldset className="form-group">
                         <label htmlFor="age">Age (months)*</label>
                         <input name="age"
                                type="number" min="0" max="6"
                                className="form-control"
-                               { ...age }
+                               value={this.state.age}
                                onChange={ this.handleInputChange } required/>
                     </fieldset>
                     <fieldset className="form-group">
@@ -96,7 +82,7 @@ class IntakeForm extends Component {
                         <input name="weight_pounds"
                                type="number" min="6" max="30"
                                className="form-control"
-                               { ...weight_pounds }
+                               value={this.state.weight_pounds}
                                onChange={ this.handleInputChange } required/>
                     </fieldset>
                     <fieldset className="form-group">
@@ -104,15 +90,16 @@ class IntakeForm extends Component {
                         <input name="weight_ounces"
                                type="number"
                                min="0" max="15" className="form-control"
-                               { ...weight_ounces }
+                               value={this.state.weight_ounces}
                                onChange={ this.handleInputChange } required/>
                     </fieldset>
+                    <InstructionalB />
                     <fieldset className="form-group">
-                        <label htmlFor="feeding_intake">Per Feeding Intake (g)</label>
+                        <label htmlFor="feeding_intake">Weighted Feeding Intake (g)</label>
                         <input name="feeding_intake"
                                type="number" className="form-control"
                                placeholder="Enter value here:"
-                               { ...feeding_intake }
+                               value={this.state.feeding_intake}
                                onChange={ this.handleInputChange }/>
                     </fieldset>
                     <fieldset className="form-group">
@@ -120,13 +107,13 @@ class IntakeForm extends Component {
                         <input name="avg_number_feedings"
                                type="number" className="form-control"
                                placeholder="Enter value here:"
-                               { ...avg_number_feedings }
+                               value={this.state.avg_number_feedings}
                                onChange={ this.handleInputChange }/>
                     </fieldset>
-                    { this.renderAlert() }
                     <button type="cancel" className="btn btn-cancel" onClick={this.handleOnCancel}>Reset Form
                     </button>
-                    <button type="submit" className="btn btn-primary" onClick={this.handleOnSubmit}>Calculate Results
+                    <button type="submit" className="btn btn-primary"
+                            onClick={this.handleOnSubmit}>Calculate Results
                     </button>
                 </form>
                 {status}
@@ -136,31 +123,17 @@ class IntakeForm extends Component {
     }
 }
 
-function validate(formProps) {
-    const errors = {};
+function validate(input) {
+// add messages to error object
+    var errors = {};
+    if (input.target.required) {
+        if (!input.target.value) {
+            errors.required = 'The first three fields (Age, Weight (lbs), Weight (oz)) must be completed to calculate results.';
+        }
 
-    //TODO: optimize empty errors
-    if (!formProps.age) {
-        errors.age = "Please enter your child's age in months";
+        if (input.target.type === 'number' && !between(input.target.value, input.target.min, input.target.max)) {
+            errors.value = 'Value needs to be within the defined range';
+        }
     }
-
-    if (!formProps.weight_pounds) {
-        errors.weight_pounds = 'Please enter the weight of your child in pounds';
-    }
-
-    if (!formProps.weight_ounces) {
-        errors.weight_ounces = 'Please enter the weight of your child in ounces';
-    }
-
     return errors;
 }
-
-function mapStateToProps(state) {
-    return { errorMessage: state.auth.error };
-}
-
-export default reduxForm({
-    form: 'intake_form',
-    fields: [ 'age', 'weight_pounds', 'weight_ounces', 'feeding_intake', 'avg_number_feedings' ],
-    validate
-}, mapStateToProps, null)(IntakeForm);
