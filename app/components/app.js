@@ -7,7 +7,6 @@ export default class App extends Component {
         return (
             <div>
                 <IntakeForm />
-                { this.props.children }
             </div>
         );
     }

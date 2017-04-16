@@ -2,8 +2,6 @@ const ozToKgMultiplier = 0.0283495;
 const kcalPerMlMilk = 0.65;
 const kcalPerOzMilk = 20;
 const valueLookup = {
-    boy: [ '107', '107', '107', '95', '82', '82', '82' ],
-    girl: [ '104', '104', '104', '95', '82', '82', '82' ],
     weightInKg: 0,
     requiredIntake: 0,
     dailyRequiredOz: 0,
@@ -12,12 +10,14 @@ const valueLookup = {
 
 function getWeightInKg(weightPounds, weightOunces) {
     valueLookup.weightInKg = ((weightPounds * 16) + weightOunces) * ozToKgMultiplier;
-    console.log(valueLookup.weightInKg)
     return valueLookup.weightInKg;
 }
 
-function getDailyRequiredIntake(sex, age) {
-    valueLookup.requiredIntake = valueLookup.weightInKg * (valueLookup[ sex ][ age ]);
+function getDailyRequiredIntake(age) {
+    // ERR = (89 × weight [kg] − 100) + 175
+
+    var basedOnAgeValue = age > 3 ? 56 : 175;
+    valueLookup.requiredIntake = ((89 * valueLookup.weightInKg) - 100) + basedOnAgeValue;
     return valueLookup.requiredIntake;
 }
 
@@ -55,10 +55,10 @@ function getSupplementFeedingKnown(feedingIntake, avgNumberFeedings) {
     return Math.round((valueLookup.dailyRequiredMl / avgNumberFeedings) - feedingIntake);
 }
 
-export function generateResults(weightPounds, weightOunces, sex, age, feedingIntake, avgNumberFeedings) {
+export function generateResults(weightPounds, weightOunces, age, feedingIntake, avgNumberFeedings) {
     let newStates = [];
     newStates.push({ weightInKg: getWeightInKg(weightPounds, weightOunces) });
-    newStates.push({ requiredIntake: getDailyRequiredIntake(sex, age) });
+    newStates.push({ requiredIntake: getDailyRequiredIntake(age) });
     newStates.push({ dailyRequiredOz: getDailyRequiredIntakeOz() });
     newStates.push({ dailyRequiredMl: getDailyRequiredIntakeMl() });
     newStates.push({ perFeedingMin: getPerFeedingMin() });

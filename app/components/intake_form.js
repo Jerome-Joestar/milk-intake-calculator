@@ -1,20 +1,21 @@
 import React, { Component } from 'react';
+import { reduxForm } from 'redux-form';
 import { generateResults } from '../helper';
 
-export default class IntakeForm extends Component {
+class IntakeForm extends Component {
 
     constructor(props) {
         super(props);
 
         this.setStateBatch = this.setStateBatch.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
-        this.handleOnCancel = this.handleOnCancel.bind(this);
         this.handleOnSubmit = this.handleOnSubmit.bind(this);
+        this.handleOnCancel = this.handleOnCancel.bind(this);
+
         this.state = {
             age: '',
             avg_number_feedings: '',
             feeding_intake: '',
-            sex: '',
             weight_pounds: '',
             weight_ounces: ''
         };
@@ -43,11 +44,26 @@ export default class IntakeForm extends Component {
     handleOnSubmit(e) {
         e.preventDefault();
         this.setStateBatch(generateResults(this.state.weight_pounds,
-            this.state.weight_ounces, this.state.sex, this.state.age,
+            this.state.weight_ounces, this.state.age,
             this.state.feeding_intake, this.state.avg_number_feedings));
+
+
+    }
+
+    renderAlert() {
+        if (this.props.errorMessage) {
+            return (
+                <div className="alert alert-danger">
+                    <strong>{ this.props.errorMessage }</strong>
+                </div>
+            )
+        }
     }
 
     render() {
+
+        const { handleSubmit, fields: { age, weight_pounds, weight_ounces, feeding_intake, avg_number_feedings } } = this.props;
+
         if (this.state && this.state.dailyRequiredOz !== undefined && this.state.dailyRequiredMl && this.state.perFeedingMin && this.state.perFeedingMax) {
             var status = <div>
                 <p>Daily milk intake required (oz): {this.state.dailyRequiredOz}</p>
@@ -66,57 +82,48 @@ export default class IntakeForm extends Component {
 
         return (
             <div>
-                <form name="intake_form" onSubmit={ this.props.handleOnSubmit } data={this.state}>
-                    <div className="form-group">
-                        <label htmlFor="sex">Sex*</label>
-                        <select name="sex"
-                                value={this.state.sex}
-                                className="form-control" onChange={ this.handleInputChange } required>
-                            <option></option>
-                            <option value="boy">Boy</option>
-                            <option value="girl">Girl</option>
-                        </select>
-                    </div>
-                    <div className="form-group">
+                <form name="intake_form" onSubmit={ handleSubmit(this.handleOnSubmit.bind(this)) }>
+                    <fieldset className="form-group">
                         <label htmlFor="age">Age (months)*</label>
                         <input name="age"
-                               value={this.state.age}
-                               type="number" min="0" max="15"
+                               type="number" min="0" max="6"
                                className="form-control"
+                               { ...age }
                                onChange={ this.handleInputChange } required/>
-                    </div>
-                    <div className="form-group">
+                    </fieldset>
+                    <fieldset className="form-group">
                         <label htmlFor="weight_pounds">Weight (lbs)*</label>
                         <input name="weight_pounds"
-                               value={this.state.weight_pounds}
                                type="number" min="6" max="30"
                                className="form-control"
+                               { ...weight_pounds }
                                onChange={ this.handleInputChange } required/>
-                    </div>
-                    <div className="form-group">
+                    </fieldset>
+                    <fieldset className="form-group">
                         <label htmlFor="weight_ounces">Weight (oz)*</label>
                         <input name="weight_ounces"
-                               value={this.state.weight_ounces}
                                type="number"
                                min="0" max="15" className="form-control"
+                               { ...weight_ounces }
                                onChange={ this.handleInputChange } required/>
-                    </div>
-                    <div className="form-group">
+                    </fieldset>
+                    <fieldset className="form-group">
                         <label htmlFor="feeding_intake">Per Feeding Intake (g)</label>
                         <input name="feeding_intake"
-                               value={this.state.feeding_intake}
-                               onChange={ this.handleInputChange }
                                type="number" className="form-control"
-                               placeholder="Enter value here:"/>
-                    </div>
-                    <div className="form-group">
+                               placeholder="Enter value here:"
+                               { ...feeding_intake }
+                               onChange={ this.handleInputChange }/>
+                    </fieldset>
+                    <fieldset className="form-group">
                         <label htmlFor="avg_number_feedings">Average number of feedings per day</label>
                         <input name="avg_number_feedings"
-                               value={this.state.avg_number_feedings}
-                               onChange={ this.handleInputChange }
                                type="number" className="form-control"
-                               placeholder="Enter value here:"/>
-                    </div>
+                               placeholder="Enter value here:"
+                               { ...avg_number_feedings }
+                               onChange={ this.handleInputChange }/>
+                    </fieldset>
+                    { this.renderAlert() }
                     <button type="cancel" className="btn btn-cancel" onClick={this.handleOnCancel}>Reset Form
                     </button>
                     <button type="submit" className="btn btn-primary" onClick={this.handleOnSubmit}>Calculate Results
@@ -128,3 +135,32 @@ export default class IntakeForm extends Component {
         );
     }
 }
+
+function validate(formProps) {
+    const errors = {};
+
+    //TODO: optimize empty errors
+    if (!formProps.age) {
+        errors.age = "Please enter your child's age in months";
+    }
+
+    if (!formProps.weight_pounds) {
+        errors.weight_pounds = 'Please enter the weight of your child in pounds';
+    }
+
+    if (!formProps.weight_ounces) {
+        errors.weight_ounces = 'Please enter the weight of your child in ounces';
+    }
+
+    return errors;
+}
+
+function mapStateToProps(state) {
+    return { errorMessage: state.auth.error };
+}
+
+export default reduxForm({
+    form: 'intake_form',
+    fields: [ 'age', 'weight_pounds', 'weight_ounces', 'feeding_intake', 'avg_number_feedings' ],
+    validate
+}, mapStateToProps, null)(IntakeForm);
