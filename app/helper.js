@@ -55,9 +55,9 @@ function getSupplementFeedingKnown(feedingIntake, avgNumberFeedings) {
     return Math.round((valueLookup.dailyRequiredMl / avgNumberFeedings) - feedingIntake);
 }
 
-export function generateResults(weightPounds, weightOunces, age, feedingIntake, avgNumberFeedings) {
+export function generateResults({age, weight_pounds, weight_ounces, feeding_intake, avg_number_feedings}) {
     let newStates = [];
-    newStates.push({ weightInKg: getWeightInKg(weightPounds, weightOunces) });
+    newStates.push({ weightInKg: getWeightInKg(weight_pounds, weight_ounces) });
     newStates.push({ requiredIntake: getDailyRequiredIntake(age) });
     newStates.push({ dailyRequiredOz: getDailyRequiredIntakeOz() });
     newStates.push({ dailyRequiredMl: getDailyRequiredIntakeMl() });
@@ -66,10 +66,10 @@ export function generateResults(weightPounds, weightOunces, age, feedingIntake, 
     newStates.push({ setFeedingsPerDayMin: getFeedingsPerDayMin() });
     newStates.push({ setFeedingsPerDayMax: getFeedingsPerDayMax() });
 
-    if (feedingIntake) {
-        newStates.push({ supplementFeedingUnknown: getSupplementFeedingUnknown(feedingIntake) });
-        if (avgNumberFeedings) {
-            newStates.push({ supplementFeedingKnown: getSupplementFeedingKnown(feedingIntake, avgNumberFeedings) });
+    if (feeding_intake) {
+        newStates.push({ supplementFeedingUnknown: getSupplementFeedingUnknown(feeding_intake) });
+        if (avg_number_feedings) {
+            newStates.push({ supplementFeedingKnown: getSupplementFeedingKnown(feeding_intake, avg_number_feedings) });
         }
     }
     return newStates;
