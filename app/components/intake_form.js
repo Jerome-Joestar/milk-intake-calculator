@@ -25,7 +25,8 @@ export default class IntakeForm extends Component {
             perFeedingMax: '',
             supplementFeedingUnknown: '',
             supplementFeedingKnown: '',
-            formError: false
+            formError: false,
+            formZeroError: false
         };
 
         this.baseState = this.state;
@@ -41,8 +42,12 @@ export default class IntakeForm extends Component {
         if (!this.state.age || !this.state.weight_pounds || !this.state.weight_ounces) {
             this.setState({ formError: true });
         }
+        else if(parseInt(this.state.weight_pounds) < 6){
+            this.setState({ formNumberError: true });
+        }
         else {
             this.setState({ formError: false });
+            this.setState({ formNumberError: false });
         }
     }
 
@@ -61,7 +66,7 @@ export default class IntakeForm extends Component {
     handleOnSubmit(e) {
         e.preventDefault();
         this.validate();
-        if (!this.state.formError) {
+        if (!this.state.formError && !this.state.formZeroError) {
             this.setStateBatch(generateResults(this.state));
         }
         else {
@@ -94,13 +99,18 @@ export default class IntakeForm extends Component {
                 completed to calculate results.
             </div>
         }
+        if (this.state.formNumberError) {
+            var error = <div className="alert alert-danger">
+                <strong>Incorrect Values!</strong> Weight (lbs) field cannot be less than 6.
+            </div>
+        }
 
         return (
             <div className="container form-container">
                 {error}
                 <form name="intake_form" onSubmit={ this.handleOnSubmit }>
                     <fieldset className="form-group">
-                        <label htmlFor="age">Age (months)*</label>
+                        <label htmlFor="age">Age (months)* <span>Up to 6 months</span></label>
                         <input name="age"
                                type="number" min="0" max="6"
                                className="form-control"
