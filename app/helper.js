@@ -1,5 +1,5 @@
 const ozToKgMultiplier = 0.453592;
-const kcalPerMlMilk = 0.65;
+const ozToMlMultiplier = 29.5735;
 const kcalPerOzMilk = 20;
 const valueLookup = {
     weightInKg: 0,
@@ -10,7 +10,7 @@ const valueLookup = {
 
 function getWeightInKg(weightPounds, weightOunces) {
     weightOunces = parseInt(weightOunces);
-    valueLookup.weightInKg = ((weightPounds * 16) + weightOunces) * ozToKgMultiplier;
+    valueLookup.weightInKg = (weightPounds + (weightOunces/16))* ozToKgMultiplier;
     return valueLookup.weightInKg;
 }
 
@@ -27,7 +27,7 @@ function getDailyRequiredIntakeOz() {
 }
 
 function getDailyRequiredIntakeMl() {
-    valueLookup.dailyRequiredMl = Math.round(valueLookup.requiredIntake / kcalPerMlMilk);
+    valueLookup.dailyRequiredMl = Math.round(valueLookup.dailyRequiredOz*ozToMlMultiplier);
     return valueLookup.dailyRequiredMl;
 }
 

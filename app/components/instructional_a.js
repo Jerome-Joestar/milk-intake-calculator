@@ -7,7 +7,7 @@ export default function InstructionalA() {
             <p>
                 The calculations used come from the Dietary Reference Intakes: The Essential Guide to Nutrient
                 Requirements (2006). The calculations utilizes the estimated energy requirements needed for an infant of
-                that particular weight and age..
+                that particular weight and age.
             </p>
             <p>
                 This calculator can be useful to practitioners who are determining if a baby is transferring adequate

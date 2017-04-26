@@ -26,7 +26,7 @@ export default class IntakeForm extends Component {
             supplementFeedingUnknown: '',
             supplementFeedingKnown: '',
             formError: false,
-            formZeroError: false
+            formNumberError: false
         };
 
         this.baseState = this.state;
@@ -42,7 +42,7 @@ export default class IntakeForm extends Component {
         if (!this.state.age || !this.state.weight_pounds || !this.state.weight_ounces) {
             this.setState({ formError: true });
         }
-        else if(parseInt(this.state.weight_pounds) < 6){
+        else if (parseInt(this.state.weight_pounds) < 5 || parseInt(this.state.age) > 6) {
             this.setState({ formNumberError: true });
         }
         else {
@@ -60,22 +60,28 @@ export default class IntakeForm extends Component {
 
     handleOnCancel(e) {
         e.preventDefault();
-        this.setState(this.baseState);
+        if (e.key === 'Enter') {
+            return;
+        }
+        else {
+            this.setState(this.baseState);
+        }
     }
 
     handleOnSubmit(e) {
         e.preventDefault();
         this.validate();
-        if (!this.state.formError && !this.state.formZeroError) {
+        if (!this.state.formError && !this.state.formNumberError) {
             this.setStateBatch(generateResults(this.state));
         }
         else {
+            this.setState({ dailyRequiredOz: '' });
             return;
         }
     }
 
     render() {
-        if (this.state && this.state.dailyRequiredOz && this.state.dailyRequiredMl && this.state.perFeedingMin && this.state.perFeedingMax && !this.state.formError) {
+        if (this.state && this.state.dailyRequiredOz && this.state.dailyRequiredMl && this.state.perFeedingMin && this.state.perFeedingMax && !this.state.formError && !this.state.formNumberError) {
             var status = <div className="alert alert-success">
                 <p><strong>Daily milk intake required (oz):</strong> {this.state.dailyRequiredOz}</p>
                 <p><strong>Daily milk intake required (ml):</strong> {this.state.dailyRequiredMl}</p>
@@ -85,7 +91,7 @@ export default class IntakeForm extends Component {
             </div>;
         }
 
-        if (this.state && this.state.supplementFeedingUnknown && this.state.supplementFeedingKnown && !this.state.formError) {
+        if (this.state && this.state.supplementFeedingUnknown && this.state.supplementFeedingKnown && !this.state.formError && !this.state.formNumberError) {
             var optional = <div className="alert alert-info">
                 <p><strong>Supplement Feeding (ml):</strong> {this.state.supplementFeedingUnknown}</p>
                 <p><strong>Supplement feedings (avg feeding per day
@@ -101,7 +107,9 @@ export default class IntakeForm extends Component {
         }
         if (this.state.formNumberError) {
             var error = <div className="alert alert-danger">
-                <strong>Incorrect Values!</strong> Weight (lbs) field cannot be less than 6.
+                <strong>Incorrect Values!</strong>
+                <p>Weight (lbs) field cannot be less than 5.</p>
+                <p>Age must be a number between 0 to 6.</p>
             </div>
         }
 
@@ -110,20 +118,20 @@ export default class IntakeForm extends Component {
                 {error}
                 <form name="intake_form" onSubmit={ this.handleOnSubmit }>
                     <fieldset className="form-group">
-                        <label htmlFor="age">Age (months)* <span>Up to 6 months</span></label>
+                        <label htmlFor="age">Age between 0 and 6 (months)*</label>
                         <input name="age"
-                               type="number" min="0" max="6"
+                               type="number" min="0"
                                className="form-control"
                                value={this.state.age}
-                               onChange={ this.handleInputChange } required/>
+                               onChange={ this.handleInputChange }/>
                     </fieldset>
                     <fieldset className="form-group">
                         <label htmlFor="weight_pounds">Weight (lbs)*</label>
                         <input name="weight_pounds"
-                               type="number" min="6" max="30"
+                               type="number" max="30"
                                className="form-control"
                                value={this.state.weight_pounds}
-                               onChange={ this.handleInputChange } required/>
+                               onChange={ this.handleInputChange }/>
                     </fieldset>
                     <fieldset className="form-group">
                         <label htmlFor="weight_ounces">Weight (oz)*</label>
@@ -131,7 +139,7 @@ export default class IntakeForm extends Component {
                                type="number"
                                min="0" max="15" className="form-control"
                                value={this.state.weight_ounces}
-                               onChange={ this.handleInputChange } required/>
+                               onChange={ this.handleInputChange }/>
                     </fieldset>
                     {status}
                     <InstructionalB />
@@ -153,11 +161,9 @@ export default class IntakeForm extends Component {
                     </fieldset>
                     {optional}
                     <div>
-                        <button type="cancel" className="btn btn-cancel" onClick={this.handleOnCancel}>Reset Form
+                        <button type="button" className="btn btn-cancel" onClick={this.handleOnCancel}>Reset Form
                         </button>
-                        <button type="submit" className="btn intake-submit"
-                                onClick={this.handleOnSubmit}>Calculate Results
-                        </button>
+                        <button type="submit" className="btn intake-submit">Calculate Results</button>
                     </div>
                 </form>
             </div>

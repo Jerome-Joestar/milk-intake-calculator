@@ -10,8 +10,8 @@ export default class App extends Component {
         return (
             <div>
                 <Header/>
-                <InstructionalA/>
                 <IntakeForm />
+                <InstructionalA/>
                 <Disclaimer />
             </div>
         );
