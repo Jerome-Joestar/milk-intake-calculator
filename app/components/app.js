@@ -1,19 +1,19 @@
 import React, { Component } from 'react';
-import IntakeForm from './intake_form';
-import Header from './header';
-import InstructionalA from './instructional_a';
-import Disclaimer from './disclaimer';
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
+import IntakeForm from './IntakeForm';
+import reducers from '../reducers';
 
-export default class App extends Component {
-
+class App extends Component {
     render() {
+        const store = createStore(reducers);
         return (
-            <div>
-                <Header/>
-                <IntakeForm />
-                <InstructionalA/>
-                <Disclaimer />
-            </div>
+
+            <Provider store={store}>
+                <IntakeForm/>
+            </Provider>
         );
     }
 }
+
+export default App;
