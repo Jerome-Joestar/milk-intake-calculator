@@ -1,34 +1,66 @@
 import React, { Component } from 'react';
 import { Field, reduxForm } from 'redux-form';
 import { generateResults } from '../helper';
+import { Errors } from './common';
+import InstructionalB from './InstructionalTextB';
+
+const validators = {
+    required: value => (value ? undefined : 'This field must be completed to calculate results.'),
+    number: value => value && isNaN(Number(value)) ? 'Must be a number' : undefined,
+    minValue: min => value => value && value < min ? `Must be at least ${min}` : undefined,
+    maxValue: () => {}
+}
+
 
 class IntakeForm extends Component {
+
+    renderField({ input, label, placeholder, type, meta: { touched, error } }) {
+        return (
+            <fieldset className="form-group">
+                <label>{label}</label>
+                <input {...input} placeholder={placeholder} type={type} className="form-control"/>
+                <Errors touched={touched} error={error} />
+            </fieldset>
+        );
+    }
+
     render() {
         const { handleSubmit, pristine, reset, submitting } = this.props;
 
         return (
             <div className="container form-container">
                 <form name="intake_form" onSubmit={ handleSubmit }>
-                    <div>
-                        <label htmlFor="age">Age between 0 and 6 (months)*</label>
-                        <Field name="age" component="input" type="number"/>
-                    </div>
-                    <div>
-                        <label htmlFor="weightPounds">Weight (lbs)*</label>
-                        <Field name="weightPounds" component="input" type="number"/>
-                    </div>
-                    <div>
-                        <label htmlFor="weightOunces">Weight (oz)*</label>
-                        <Field name="weightOunces" component="input" type="number"/>
-                    </div>
-                    <div>
-                        <label htmlFor="feedingIntake">Weighted Feeding Intake (g)</label>
-                        <Field name="feedingIntake" component="input" type="number"/>
-                    </div>
-                    <div>
-                        <label htmlFor="avgNumberFeedings">Average number of feedings per day</label>
-                        <Field name="avgNumberFeedings" component="input" type="number"/>
-                    </div>
+                    <Field
+                        name="age"
+                        type="number"
+                        component={this.renderField}
+                        label="Age between 0 and 6 (months)*"
+                        validate={[ validators.required, validators.number ]}/>
+                    <Field
+                        name="weightPounds"
+                        type="number"
+                        component={this.renderField}
+                        label="Weight (lbs)*"
+                        validate={[ validators.required, validators.number ]}/>
+                    <Field
+                        name="weightOunces"
+                        type="number"
+                        component={this.renderField}
+                        label="Weight (oz)*"
+                        validate={[ validators.required, validators.number ]}/>
+                    <InstructionalB />
+                    <Field
+                        name="feedingIntake"
+                        type="number"
+                        component={this.renderField}
+                        label="Weighted Feeding Intake (g)"
+                        validate={[ validators.number ]}/>
+                    <Field
+                        name="avgNumberFeedings"
+                        type="number"
+                        component={this.renderField}
+                        label="Average number of feedings per day"
+                        validate={[ validators.number ]}/>
                     <div>
                         <button
                             disabled={pristine || submitting}

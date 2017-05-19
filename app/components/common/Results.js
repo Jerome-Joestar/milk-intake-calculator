@@ -10,4 +10,6 @@ const Results = () => {
                 - {this.state.setFeedingsPerDayMax}</p>
         </div>
     );
-}
+};
+
+export { Results };
