@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
 import { Field, reduxForm } from 'redux-form';
 import { generateResults } from '../helper';
-import { Errors } from './common';
+import { Errors, Results } from './common';
 import InstructionalB from './InstructionalTextB';
 
 const validators = {
     required: value => (value ? undefined : 'This field must be completed to calculate results.'),
-    number: value => value && isNaN(Number(value)) ? 'Must be a number' : undefined,
-    minValue: min => value => value && value < min ? `Must be at least ${min}` : undefined,
-    maxValue: () => {}
+    number: value => value && isNaN(Number(value)) ? 'This value must be a number' : undefined,
+    minValue: min => value => value && value < min ? `This value must be at least ${min}` : undefined,
+    maxValue: max => value => value && value > max ? `This value must be less than ${max}` : undefined,
+    setMinValue: value => validators.minValue(value),
+    setMaxValue: value => validators.maxValue(value)
 }
 
 
@@ -35,19 +37,28 @@ class IntakeForm extends Component {
                         type="number"
                         component={this.renderField}
                         label="Age between 0 and 6 (months)*"
-                        validate={[ validators.required, validators.number ]}/>
+                        validate={[ validators.required,
+                                    validators.number,
+                                    validators.setMinValue(0),
+                                    validators.setMaxValue(6) ]}/>
                     <Field
                         name="weightPounds"
                         type="number"
                         component={this.renderField}
                         label="Weight (lbs)*"
-                        validate={[ validators.required, validators.number ]}/>
+                        validate={[ validators.required,
+                                    validators.number,
+                                    validators.setMinValue(5),
+                                    validators.setMaxValue(30) ]}/>
                     <Field
                         name="weightOunces"
                         type="number"
                         component={this.renderField}
                         label="Weight (oz)*"
-                        validate={[ validators.required, validators.number ]}/>
+                        validate={[ validators.required,
+                                    validators.number,
+                                    validators.setMinValue(0),
+                                    validators.setMaxValue(15) ]}/>
                     <InstructionalB />
                     <Field
                         name="feedingIntake"
