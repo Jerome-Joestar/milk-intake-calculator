@@ -8,6 +8,11 @@ class Results extends Component {
         this.setStateValues(age, weightPounds, weightOunces);
     }
 
+    componentWillReceiveProps(nextProps){
+        const { age, weightPounds, weightOunces } = nextProps;
+        this.setStateValues(age, weightPounds, weightOunces);
+    }
+
     setStateValues(age, weightPounds, weightOunces) {
         const newWeight = calculationHelper.getWeightInKg(weightPounds, weightOunces);
         const baseRequired = calculationHelper.getDailyRequiredIntake(age, newWeight);

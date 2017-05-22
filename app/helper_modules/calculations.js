@@ -13,7 +13,7 @@ function getDailyRequiredIntake(age, weightInKg) {
 }
 
 function getDailyRequiredIntakeOz(requiredIntake) {
-    return parseInt(requiredIntake/kcalPerOzMilk).toFixed(1);
+    return (requiredIntake/kcalPerOzMilk).toFixed(1);
 }
 
 function getDailyRequiredIntakeMl(requiredIntakeOz) {
@@ -22,7 +22,7 @@ function getDailyRequiredIntakeMl(requiredIntakeOz) {
 
 function getPerFeeding(dailyRequiredOz, limitValue) {
     //For max value limitValue = 8, for min limitValue = 12
-    return parseInt(dailyRequiredOz/limitValue).toFixed(1);
+    return (dailyRequiredOz/limitValue).toFixed(1);
 }
 
 function getFeedingsPerDay(dailyRequiredMl, limitValue) {
