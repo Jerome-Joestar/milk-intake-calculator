@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
+
 var calculationHelper = require('../../helper_modules/calculations');
 
 //Transform to class to keep state of values
-class Results extends Component {
+class IntakeResults extends Component {
     componentWillMount() {
         const { age, weightPounds, weightOunces } = this.props;
         this.setStateValues(age, weightPounds, weightOunces);
@@ -55,6 +56,5 @@ class Results extends Component {
         );
     }
 }
-;
 
-export { Results };
+export { IntakeResults };

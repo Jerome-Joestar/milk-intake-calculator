@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function InstructionalA() {
     return (
-        <div className="container instructional-a">
+        <div className="container instructional-text-a">
             <h3>About this calculator</h3>
             <p>
                 The calculations used come from the Dietary Reference Intakes: The Essential Guide to Nutrient

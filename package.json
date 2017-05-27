@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "babel-preset-stage-1": "^6.1.18",
-    "material-ui": "^0.17.3",
+    "material-ui": "^0.16.7",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
     "react-material-ui-number-input": "^1.0.4",

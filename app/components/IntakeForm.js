@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Field, reduxForm, formValueSelector } from 'redux-form';
-import { Errors, Results } from './common';
+import RaisedButton from 'material-ui/RaisedButton';
+
+import { IntakeContainer, IntakeTextField, IntakeResults } from './common';
 import InstructionalB from './InstructionalTextB';
 
 const validators = {
@@ -14,21 +16,14 @@ const validators = {
 }
 
 
+
+
 class IntakeForm extends Component {
-    renderField({ input, label, placeholder, type, meta: { touched, error } }) {
-        return (
-            <fieldset className="form-group">
-                <label>{label}</label>
-                <input {...input} placeholder={placeholder} type={type} className="form-control"/>
-                <Errors touched={touched} error={error}/>
-            </fieldset>
-        );
-    }
 
     renderResults() {
         const { valid, age, weightPounds, weightOunces, feedingIntake, avgNumberFeedings } = this.props;
         if (valid) {
-            return <Results age={age}
+            return <IntakeResults age={age}
                             weightPounds={weightPounds}
                             weightOunces={weightOunces}
                             feedingIntake={feedingIntake}
@@ -40,14 +35,16 @@ class IntakeForm extends Component {
         const { handleSubmit, pristine, reset, submitting, invalid } = this.props;
 
         return (
-            <div className="container form-container">
+            <IntakeContainer>
                 <form name="intake_form" onSubmit={ handleSubmit }>
                     <Field
                         name="age"
                         type="number"
                         parse={(value) => parseInt(value)}
-                        component={this.renderField}
-                        label="Age between 0 and 6 (months)*"
+                        component={IntakeTextField}
+                        fullWidth={true}
+                        hintText="Age"
+                        floatingLabelText="Age between 0 and 6 (months)*"
                         validate={[ validators.required,
                             validators.number,
                             validators.setMinValue(0),
@@ -56,7 +53,8 @@ class IntakeForm extends Component {
                         name="weightPounds"
                         type="number"
                         parse={(value) => parseInt(value)}
-                        component={this.renderField}
+                        component={IntakeTextField}
+                        fullWidth={true}
                         label="Weight (lbs)*"
                         validate={[ validators.required,
                             validators.number,
@@ -66,7 +64,8 @@ class IntakeForm extends Component {
                         name="weightOunces"
                         type="number"
                         parse={(value) => parseInt(value)}
-                        component={this.renderField}
+                        component={IntakeTextField}
+                        fullWidth={true}
                         label="Weight (oz)*"
                         validate={[ validators.required,
                             validators.number,
@@ -77,34 +76,33 @@ class IntakeForm extends Component {
                         name="feedingIntake"
                         type="number"
                         parse={(value) => parseInt(value)}
-                        component={this.renderField}
+                        component={IntakeTextField}
+                        fullWidth={true}
                         label="Weighted Feeding Intake (g)"
                         validate={[ validators.number ]}/>
                     <Field
                         name="avgNumberFeedings"
                         type="number"
                         parse={(value) => parseInt(value)}
-                        component={this.renderField}
+                        component={IntakeTextField}
+                        fullWidth={true}
                         label="Average number of feedings per day"
                         validate={[ validators.number ]}/>
-                    <div>
-                        <button
+                    <div className="intake-input-forms">
+                        <RaisedButton
                             disabled={pristine || submitting}
+                            label="Reset Form"
                             type="button"
-                            className="btn btn-cancel"
-                            onClick={reset}>
-                            Reset Form
-                        </button>
-                        <button
+                            onClick={reset} />
+                        <RaisedButton
                             disabled={pristine || submitting || invalid}
+                            label="Calculate Results"
                             type="submit"
-                            className="btn intake-submit">
-                            Calculate Results
-                        </button>
+                            primary={true} />
                     </div>
                 </form>
                 {this.renderResults()}
-            </div>
+            </IntakeContainer>
         );
     }
 }
