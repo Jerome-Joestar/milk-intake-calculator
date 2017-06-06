@@ -1,4 +1,3 @@
-export * from './IntakeContainer';
-export * from './IntakeTextField';
+export * from './IntakeErrors';
 export * from './IntakeResults';
 
