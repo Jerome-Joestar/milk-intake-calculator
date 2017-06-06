@@ -16,7 +16,6 @@ const validators = {
 
 
 class IntakeForm extends Component {
-
     renderField({ input, label, placeholder, type, meta: { touched, error } }) {
         return (
             <fieldset className="form-group">
@@ -42,7 +41,9 @@ class IntakeForm extends Component {
         const { handleSubmit, pristine, reset, submitting, invalid } = this.props;
 
         return (
-            <div className="form-container">
+            <div className="container form-container">
+                <p>Results are automatically calculated as values are entered in the form below.</p>
+                <p>* denotes a required field.</p>
                 <form name="intake_form" onSubmit={ handleSubmit }>
                     <Field
                         name="age"
@@ -91,14 +92,12 @@ class IntakeForm extends Component {
                         validate={[ validators.number ]}/>
                     <div className="intake-input-forms">
                         <button
+                            className="btn btn-cancel"
                             disabled={pristine || submitting}
-                            label="Reset Form"
                             type="button"
-                            onClick={reset}/>
-                        <button
-                            disabled={pristine || submitting || invalid}
-                            label="Calculate Results"
-                            type="submit"/>
+                            onClick={reset}>
+                            Reset Form
+                        </button>
                     </div>
                 </form>
                 {this.renderResults()}
