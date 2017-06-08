@@ -4,7 +4,7 @@
   "description": "Calculator to detemine milk intake for babies",
   "main": "index.js",
   "scripts": {
-    "start": "node ./app/index.js",
+    "start": "node ./node_modules/webpack-dev-server/bin/weback-dev-server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack-dev-server"
   },
