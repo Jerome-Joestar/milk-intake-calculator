@@ -6,7 +6,7 @@ import { IntakeErrors, IntakeResults } from './common';
 import InstructionalTextB from './InstructionalTextB';
 
 const validators = {
-    required: value => (value ? undefined : 'This field must be completed to calculate results.'),
+    required: zeroApproved => value => (value || zeroApproved ? undefined : 'This field must be completed to calculate results.'),
     number: value => value && isNaN(Number(value)) ? 'This value must be a number' : undefined,
     minValue: min => value => value && value < min ? `This value must be at least ${min}` : undefined,
     maxValue: max => value => value && value > max ? `This value must be less than ${max}` : undefined,
@@ -51,7 +51,7 @@ class IntakeForm extends Component {
                         parse={(value) => parseInt(value, 10)}
                         component={this.renderField}
                         label="Age between 0 and 6 (months)*"
-                        validate={[ validators.required,
+                        validate={[ validators.required(true),
                             validators.number,
                             validators.setMinValue(0),
                             validators.setMaxValue(6) ]}/>
@@ -61,7 +61,7 @@ class IntakeForm extends Component {
                         parse={(value) => parseInt(value, 10)}
                         component={this.renderField}
                         label="Weight (lbs)*"
-                        validate={[ validators.required,
+                        validate={[ validators.required(false),
                             validators.number,
                             validators.setMinValue(5),
                             validators.setMaxValue(30) ]}/>
@@ -71,7 +71,7 @@ class IntakeForm extends Component {
                         parse={(value) => parseInt(value, 10)}
                         component={this.renderField}
                         label="Weight (oz)*"
-                        validate={[ validators.required,
+                        validate={[ validators.required(true),
                             validators.number,
                             validators.setMinValue(0),
                             validators.setMaxValue(15) ]}/>
